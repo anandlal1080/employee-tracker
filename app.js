@@ -52,7 +52,7 @@ async function init() {
       viewRoles();
       break;
     case `${VIEW} Employess`:
-      songAndAlbumSearch();
+      viewEmployees();
       break;
     case `${UPDATEEMP}`:
       songAndAlbumSearch();
@@ -75,7 +75,25 @@ async function departmentSearch() {
 
 async function viewRoles() {
   const query = "select title from role";
-  // SELECT all departments
+  // SELECT all roles
+  const data = await connection.query(query);
+  console.table(data);
+  init();
+}
+
+async function viewEmployees() {
+  const query = `select  
+
+  role.title,
+  IFNULL(CONCAT(m.first_name, ' ', m.last_name),
+              'Top Manager') AS 'Manager',
+  CONCAT(e.first_name,' ',e.last_name) AS 'Direct report'
+  
+  from employee e
+  left join employee m on m.id = e.manager_id
+  inner join role on e.role_id = role.id
+  ORDER BY manager DESC`;
+  // SELECT all roles
   const data = await connection.query(query);
   console.table(data);
   init();
