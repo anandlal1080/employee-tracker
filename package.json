@@ -18,6 +18,8 @@
   },
   "homepage": "https://github.com/anandlal1080/employee-tracker#readme",
   "dependencies": {
+    "ascii-art": "^2.5.0",
+    "asciiart-logo": "^0.2.6",
     "chalk": "^4.1.0",
     "inquirer": "^7.3.3",
     "mysql": "^2.18.1"
