@@ -84,14 +84,16 @@ async function viewRoles() {
 async function viewEmployees() {
   const query = `select  
 
-  role.title,
+  department.name AS 'Department',
+  role.title AS 'Job Title',
   IFNULL(CONCAT(m.first_name, ' ', m.last_name),
               'Top Manager') AS 'Manager',
-  CONCAT(e.first_name,' ',e.last_name) AS 'Direct report'
-  
+  CONCAT(e.first_name,' ',e.last_name) AS 'Direct report', 
+  role.salary AS 'Employee Salary'
   from employee e
   left join employee m on m.id = e.manager_id
   inner join role on e.role_id = role.id
+  inner join department on role.department_id = department.id
   ORDER BY manager DESC`;
   // SELECT all roles
   const data = await connection.query(query);
