@@ -6,6 +6,7 @@ const { DEPARTMENT } = require("./questions/color");
 const { EMPLOYEE } = require("./questions/color");
 const { VIEW } = require("./questions/color");
 const { UPDATEEMP } = require("./questions/color");
+const { table } = require("ascii-art");
 
 const longText =
   "Efficient employee management. " +
@@ -54,7 +55,7 @@ async function init() {
       viewEmployees();
       break;
     case `${UPDATEEMP}`:
-      songAndAlbumSearch();
+      updateEmpRoles();
       break;
     case "exit":
       process.exit(0);
@@ -130,8 +131,6 @@ async function addEmployee() {
   const empOpts =
     "select id, CONCAT(first_name,' ',last_name) AS 'Name' from employee;";
   const empData = await connection.query(empOpts);
-  // console.table(roleData);
-  console.table(empData);
 
   const emp = await inquirer.prompt([
     {
@@ -214,6 +213,51 @@ async function viewEmployees() {
   const data = await connection.query(query);
   console.table(data);
   init();
+}
+
+async function updateEmpRoles() {
+  const query =
+    "select id, CONCAT(first_name,' ',last_name) AS 'Name' from employee";
+  const data = await connection.query(query);
+  const roleQuery = "select id, title from role";
+  const roleData = await connection.query(roleQuery);
+
+  const updateRole = await inquirer.prompt([
+    {
+      name: "role",
+      message: `Who is the ${EMPLOYEE}'s Role to update? `,
+      type: "list",
+      choices: data.map((empItem) => ({
+        name: empItem.Name,
+        value: empItem.id,
+      })),
+    },
+    {
+      name: "new_role",
+      message: `What is the new ${ROLE}? `,
+      type: "list",
+      choices: roleData.map((roleItem) => ({
+        name: roleItem.title,
+        value: roleItem.id,
+      })),
+    },
+  ]);
+  var newQuery = connection.query(
+    "UPDATE employee SET ? WHERE ?",
+    [
+      {
+        role_id: updateRole.new_role,
+      },
+      {
+        id: updateRole.role,
+      },
+    ],
+    function (err, res) {
+      if (err) throw err;
+      console.log(res.affectedRows + ` ${ROLE} updated!\n`);
+      init();
+    }
+  );
 }
 
 function logoArt() {
