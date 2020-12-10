@@ -42,7 +42,7 @@ async function init() {
       addRole();
       break;
     case `Add ${EMPLOYEE}`:
-      rangeSearch();
+      addEmployee();
       break;
     case `${VIEW} Departments`:
       departmentSearch();
@@ -119,6 +119,62 @@ async function addRole() {
     function (err, res) {
       if (err) throw err;
       console.log(res.affectedRows + ` ${ROLE} inserted!\n`);
+      init();
+    }
+  );
+}
+
+async function addEmployee() {
+  const roleId = "select id, title from role;";
+  const roleData = await connection.query(roleId);
+  const empOpts =
+    "select id, CONCAT(first_name,' ',last_name) AS 'Name' from employee;";
+  const empData = await connection.query(empOpts);
+  // console.table(roleData);
+  console.table(empData);
+
+  const emp = await inquirer.prompt([
+    {
+      name: "first_name",
+      message: `What is the ${EMPLOYEE} First Name?`,
+    },
+    {
+      name: "last_name",
+      message: `What is the ${EMPLOYEE} Last Name?`,
+    },
+    {
+      name: "role_id",
+      message: `What is the ${ROLE} for this ${EMPLOYEE}? `,
+      type: "list",
+      choices: roleData.map((roleItem) => ({
+        name: roleItem.title,
+        value: roleItem.id,
+      })),
+    },
+    {
+      name: "mngr_id",
+      message: `Who is the Manager for this ${EMPLOYEE}? `,
+      type: "list",
+      choices: empData.map((empItem) => ({
+        name: empItem.Name,
+        value: empItem.id,
+      })),
+    },
+  ]);
+
+  console.log(emp.mngr_id);
+  console.log(emp.role_id);
+  var query = await connection.query(
+    "INSERT INTO employee SET ?",
+    {
+      first_name: emp.first_name,
+      last_name: emp.last_name,
+      role_id: emp.role_id,
+      manager_id: emp.mngr_id,
+    },
+    function (err, res) {
+      if (err) throw err;
+      console.log(res.affectedRows + ` ${EMPLOYEE} inserted!\n`);
       init();
     }
   );
