@@ -36,11 +36,10 @@ async function init() {
 
   switch (action) {
     case `Add ${DEPARTMENT}`:
-      //   departmentSearch();
+      addDept();
       break;
     case `Add ${ROLE}`:
-      console.log("Hi");
-      //   multiSearch();
+      addRole();
       break;
     case `Add ${EMPLOYEE}`:
       rangeSearch();
@@ -63,6 +62,66 @@ async function init() {
     default:
       break;
   }
+}
+
+async function addDept() {
+  const dept = await inquirer.prompt([
+    {
+      name: "name",
+      message: `What is the ${DEPARTMENT} name?`,
+    },
+  ]);
+
+  var query = await connection.query(
+    "INSERT INTO department SET ?",
+    {
+      name: dept.name,
+    },
+    function (err, res) {
+      if (err) throw err;
+      console.log(res.affectedRows + ` ${DEPARTMENT} inserted!\n`);
+      init();
+    }
+  );
+}
+
+async function addRole() {
+  const deptOpts = "select id, name from department;";
+  const data = await connection.query(deptOpts);
+
+  const role = await inquirer.prompt([
+    {
+      name: "title",
+      message: `What is the ${ROLE} name?`,
+    },
+    {
+      name: "salary",
+      message: `What is the salary for this ${ROLE}? `,
+    },
+    {
+      name: "dept",
+      message: `What is the ${DEPARTMENT} for this ${ROLE}? `,
+      type: "list",
+      choices: data,
+    },
+  ]);
+
+  var newQ = `select id from department where name = "${role.dept}"`;
+  var deptQuery = await connection.query(newQ);
+
+  var query = await connection.query(
+    "INSERT INTO role SET ?",
+    {
+      title: role.title,
+      salary: role.salary,
+      department_id: deptQuery[0].id,
+    },
+    function (err, res) {
+      if (err) throw err;
+      console.log(res.affectedRows + ` ${ROLE} inserted!\n`);
+      init();
+    }
+  );
 }
 
 async function departmentSearch() {
