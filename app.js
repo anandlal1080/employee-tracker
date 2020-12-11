@@ -18,7 +18,7 @@ const {
 
 const longText =
   "Efficient employee management. " +
-  "with reliable and secure, " +
+  "Including reliable and secure " +
   "data protection! ";
 logoArt();
 
