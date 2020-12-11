@@ -26,6 +26,7 @@ logoArt();
 
 init();
 
+// This function contains the main menue and the associated switch cases
 async function init() {
   const { action } = await inquirer.prompt({
     name: "action",
@@ -80,6 +81,7 @@ async function init() {
   }
 }
 
+// This function gives renders the logo art at the app load.
 function logoArt() {
   console.log(
     logo({

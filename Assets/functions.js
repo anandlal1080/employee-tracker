@@ -6,6 +6,7 @@ const { UPDATEEMP } = require("../questions/color");
 const connection = require("../connection");
 const inquirer = require("inquirer");
 
+// This function gives the user the ability to Add Departments
 async function addDept() {
   const dept = await inquirer.prompt([
     {
@@ -20,6 +21,7 @@ async function addDept() {
   console.log(` ${DEPARTMENT} inserted!\n`);
 }
 
+// This function gives the user the ability to Add Roles
 async function addRole() {
   const deptOpts = "select id, name from department;";
   const data = await connection.query(deptOpts);
@@ -52,6 +54,7 @@ async function addRole() {
   console.log(` ${ROLE} inserted!\n`);
 }
 
+// This function gives the user the ability to Add Employees
 async function addEmployee() {
   const roleId = "select id, title from role;";
   const roleData = await connection.query(roleId);
@@ -99,6 +102,7 @@ async function addEmployee() {
   console.log(` ${EMPLOYEE} inserted!\n`);
 }
 
+// This function gives the user the ability to view all Departments
 async function departmentSearch() {
   const query = "select name from department;";
   // SELECT all departments
@@ -106,6 +110,7 @@ async function departmentSearch() {
   console.table(data);
 }
 
+// This function gives the user the ability to view all Roles
 async function viewRoles() {
   const query = "select title from role";
   // SELECT all roles
@@ -113,6 +118,7 @@ async function viewRoles() {
   console.table(data);
 }
 
+// This function gives the user the ability to view all Employees
 async function viewEmployees() {
   const query = `select  
   
@@ -132,6 +138,7 @@ async function viewEmployees() {
   console.table(data);
 }
 
+// This function gives the user the ability to Update Employee Roles
 async function updateEmpRoles() {
   const query =
     "select id, CONCAT(first_name,' ',last_name) AS 'Name' from employee";
